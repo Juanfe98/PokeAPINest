@@ -15,3 +15,7 @@
 `npm install -g @nest/cli`
 
 4. Execute the database with docker `docker-compose up -d`
+
+## Docs
+
+See the docs folder in the root od this project to read more information related to nestJS.
