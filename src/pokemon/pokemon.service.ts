@@ -1,5 +1,5 @@
-import { Model } from 'mongoose';
-import {BadRequestException, Injectable, InternalServerErrorException} from '@nestjs/common';
+import {isValidObjectId, Model} from 'mongoose';
+import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
@@ -31,8 +31,28 @@ export class PokemonService {
     return `This action returns all pokemon`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOne(searchTerm: string) {
+    let pokemon = undefined;
+    // The user is looking by the 'no' column
+    if(!isNaN(+searchTerm)){
+      pokemon = await this.pokemonModel.findOne({'no': searchTerm});
+    }
+
+    // The request is sending the mongoId to get the pokemon.
+    if( !pokemon && isValidObjectId(searchTerm)){
+      pokemon = await this.pokemonModel.findById(searchTerm);
+    }
+
+    // If none of above works, we look by the pokemon name.
+    if(!pokemon){
+      pokemon = await this.pokemonModel.findOne({'name': searchTerm.toLocaleLowerCase().trim()});
+    }
+
+    if(!pokemon){
+      throw new NotFoundException('Pokemon does not exist or the search criteria is not supported');
+    }
+
+    return pokemon;
   }
 
   update(id: number, updatePokemonDto: UpdatePokemonDto) {

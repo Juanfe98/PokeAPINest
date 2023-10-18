@@ -40,3 +40,34 @@ create(createPokemonDto: CreatePokemonDto) {
 In terms of "better," it depends on your project requirements and coding style. The first approach is often preferred for
 its error-handling capabilities and compatibility with asynchronous code. However, if you have a simple use case and prefer
 a more synchronous style, the second approach can be suitable.
+
+### Get By (Find One)
+
+With this approach we will be creating on single endpoint but allowing the user to search the pokemon by multiple fields.
+(name, mongoId, no).
+
+```typescript
+async findOne(searchTerm: string) {
+    let pokemon = undefined;
+    // The user is looking by the 'no' column
+    if(!isNaN(+searchTerm)){
+        pokemon = await this.pokemonModel.findOne({'no': searchTerm});
+    }
+
+    // The request is sending the mongoId to get the pokemon.
+    if( !pokemon && isValidObjectId(searchTerm)){
+        pokemon = await this.pokemonModel.findById(searchTerm);
+    }
+
+    // If none of above works, we look by the pokemon name.
+    if(!pokemon){
+        pokemon = await this.pokemonModel.findOne({'name': searchTerm.toLocaleLowerCase().trim()});
+    }
+
+    if(!pokemon){
+        throw new NotFoundException('Pokemon does not exist or the search criteria is not supported');
+    }
+
+    return pokemon;
+}
+```
