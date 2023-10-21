@@ -87,7 +87,21 @@ export class PokemonService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(searchTerm: string) {
+    const pokemonToDelete = (await this.findOne(searchTerm)) as Pokemon | null;
+
+    try {
+      const removedPokemon = await this.pokemonModel.findByIdAndRemove(
+        pokemonToDelete._id,
+      );
+
+      if (removedPokemon) {
+        return `Pokemon with name ${removedPokemon.name} removed successfully.`;
+      }
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Unable to update the Pokémon, check server logs.`,
+      );
+    }
   }
 }
