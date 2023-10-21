@@ -76,6 +76,11 @@ export class PokemonService {
       const updatedPokemon = await pokemonToUpdate.save();
       return updatedPokemon;
     } catch (e) {
+      if (e.code === 11000) {
+        throw new BadRequestException(
+          `Pokemon ${JSON.stringify(e['keyValue'])} already exist`,
+        );
+      }
       throw new InternalServerErrorException(
         `Unable to update the Pokémon, check server logs.`,
       );
