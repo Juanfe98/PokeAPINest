@@ -10,6 +10,7 @@ import {
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { ParseMongoIdPipe } from 'src/common/parse-mongo-id.pipe';
 
 @Controller('pokemon')
 export class PokemonController {
@@ -39,7 +40,7 @@ export class PokemonController {
   }
 
   @Delete(':searchTerm')
-  remove(@Param('searchTerm') searchTerm: string) {
+  remove(@Param('searchTerm', ParseMongoIdPipe) searchTerm: string) {
     return this.pokemonService.remove(searchTerm);
   }
 }
