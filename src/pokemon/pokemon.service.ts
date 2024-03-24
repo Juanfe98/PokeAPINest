@@ -87,21 +87,20 @@ export class PokemonService {
     }
   }
 
-  async remove(searchTerm: string) {
-    const pokemonToDelete = (await this.findOne(searchTerm)) as Pokemon | null;
+  async remove(id: string) {
+    /**
+     * This implementation might be correct but we have an issue and is that
+     * if we try to remove a pokemon with an ID that does not exist we will
+     * return empty so the Front end wont be able to know the real status
+     * of this request.
+     */
+    // const removedPokemon = await this.pokemonModel.findByIdAndRemove(id);
+    // return removedPokemon;
 
-    try {
-      const removedPokemon = await this.pokemonModel.findByIdAndRemove(
-        pokemonToDelete._id,
-      );
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
 
-      if (removedPokemon) {
-        return `Pokemon with name ${removedPokemon.name} removed successfully.`;
-      }
-    } catch (e) {
-      throw new InternalServerErrorException(
-        `Unable to update the Pokémon, check server logs.`,
-      );
+    if (deletedCount === 0) {
+      throw new BadRequestException(`Pokemon with the id ${id} was not found`);
     }
   }
 }

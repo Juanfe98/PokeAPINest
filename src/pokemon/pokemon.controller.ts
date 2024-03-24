@@ -39,8 +39,8 @@ export class PokemonController {
     return this.pokemonService.update(searchTerm, updatePokemonDto);
   }
 
-  @Delete(':searchTerm')
-  remove(@Param('searchTerm', ParseMongoIdPipe) searchTerm: string) {
-    return this.pokemonService.remove(searchTerm);
+  @Delete(':id')
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
+    return this.pokemonService.remove(id);
   }
 }
