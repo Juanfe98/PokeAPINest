@@ -16,6 +16,10 @@
 
 4. Execute the database with docker `docker-compose up -d`
 
+5. If you want to run the seed process to populate the database you can make a GET request to: 
+`http://localhost:3000/api/v2/seed`
+Also, check the number passed in the url in `src/seed/seed.service.ts` you can change that number based on your data needs.
+
 ## Docs
 
 See the docs folder in the root od this project to read more information related to nestJS.
